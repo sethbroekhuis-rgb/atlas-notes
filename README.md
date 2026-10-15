@@ -1,58 +1,49 @@
-# Atlas Notes - iPhone offline companion (Prototype v0.1)
+# Atlas Notes v0.2 — offline iPhone companion for Project Atlas
 
-Atlas Notes is a **notes-and-photos-only** Home Screen web app for use alongside Project Atlas on Windows. No accounts, databases on the internet, or paid app hosting are required.
+Atlas Notes is a **text-and-photo-only** Home Screen app. No App Store release, account, online database, or paid hosting is required. The application code can be served free on GitHub Pages; your notes and photos are saved **locally on your iPhone**, not uploaded to GitHub.
 
-## Publish the app for free using GitHub Pages
+## Update the version already installed on your iPhone
 
-1. On a personal GitHub account, create a new repository named `atlas-notes` and select **Public** (needed for GitHub Pages on GitHub Free). Make sure it contains no company or confidential information.
-2. Extract this ZIP onto your computer.
-3. In your new GitHub repository, select **Add file > Upload files** and upload all the files from this folder **not the ZIP itself**. The root of the repository must contain `index.html`, `app.js`, `styles.css`, `zip.js`, `service-worker.js`, `manifest.webmanifest` and the PNG icon files. Commit the upload.
-4. Open repository **Settings > Pages**. Under **Build and deployment**, choose **Deploy from a branch**, select `main`, folder `/(root)`, then click **Save**.
-5. Once deployed, your site URL will usually be `https://YOUR-GITHUB-USERNAME.github.io/atlas-notes/`. Use the **Visit site** link in GitHub's Pages settings to get the exact URL.
-6. On your iPhone, open the URL in **Safari**. Tap **Share > Add to Home Screen**, turn on **Open as Web App**, and tap **Add**.
-7. Launch **Atlas Notes** from the Home Screen. Test saving a note and photo, then turn on Airplane Mode and verify that you can reopen it and see the note. Do this before relying on it.
+**IMPORTANT: Update the existing GitHub Pages repository in place. Do not delete the installed Atlas Notes icon, clear its website data, or move the app to a different website. Doing any of those can erase or disconnect your locally stored notes.**
 
-GitHub Pages hosts only the app's public HTML/JavaScript/CSS/images. Notes and photos are stored locally on the iPhone using IndexedDB; no note/photo data is deliberately uploaded anywhere by the app.
+1. On Windows, extract the new `atlas_notes_pwa_v0.2.zip`.
+2. Open the **same personal GitHub repository** that hosts your working Atlas Notes app. Replace the repository-root app files with the new ones (`index.html`, `app.js`, `styles.css`, `service-worker.js`, etc.) and commit the changes. Do **not** upload the ZIP itself or place the files in a nested folder. Do not upload any transfer ZIPs, company documents, photographs, or personal notes to GitHub.
+3. After GitHub Pages publishes the update, connect your iPhone to the internet temporarily so the **app code** can update. Reopen Atlas Notes from the existing Home Screen icon. It may take closing and reopening the app again for its offline cache to refresh.
+4. Open **Transfer**. The heading should display **`USB workflow · v0.2`** and the new **Clear Transferred Notes** button. If you still see "Read import receipt", refresh the website in Safari while online, then completely close and reopen the existing Home Screen app.
+5. Confirm your existing saved notes are still visible **before** you clear anything. Atlas Notes keeps the same IndexedDB storage name (`atlas-notes-v1`).
 
-## How to use v0.1
+## Regular capture and USB-transfer workflow
 
-- **Capture**: Type a title and/or note, optionally attach up to 20 photos, and tap **Save note**. You can later edit or delete a saved note.
-- **Saved**: Shows notes that are stored locally and waiting for a transfer.
-- **Transfer**: Choose **Optimized** or **Original** photo transfer quality, tap **Prepare transfer ZIP**, then use **Share to Files** (preferred on iPhone) or **Download ZIP**.
-- **Import receipt**: The future Windows importer will create a receipt proving the import succeeded. Only reading a matching receipt permits deletion of the imported notes/photos from the iPhone. This safety mechanism is present, but the Windows importer is **not yet included in this v0.1 release**. Therefore, do not manually delete notes merely because you created a ZIP.
+1. **Capture**: Create a note, add text and/or photos, and save it. Notes and full-resolution photos remain locally stored on the iPhone until you delete or clear them.
+2. **Transfer**: Choose `Optimized` or `Original` photo quality; tap **Prepare transfer ZIP**; then tap **Share to Files** (or **Download ZIP**). The transfer includes all currently saved notes, with their source timestamps. Nothing is deleted by exporting.
+3. **On iPhone (Files app)**: Save the exported ZIP to **On My iPhone → Chrome**. This is the USB-visible location you confirmed works with your setup.
+4. **On Windows**: Connect the iPhone by cable, open **Apple Devices → Files → Chrome**, and copy the ZIP to a local Windows folder.
+5. **Project Atlas v0.5 or later**: Open **Notes Inbox → Import from iPhone** and import the ZIP. Check the text notes **and photographs** appear correctly. Keep the ZIP or the Atlas-verified backup copy as a recovery copy.
+6. **Back on iPhone**: Open **Atlas Notes → Transfer → Clear Transferred Notes**, carefully read the filename and counts, and confirm. Only notes that were included in the latest exported ZIP **and have not been edited since** are removed, along with their attached photos. Notes created or edited after that export remain on the phone. You do **not** have to transfer a JSON import receipt back to the phone.
 
-## USB file transfer to Windows
+**IMPORTANT: The phone cannot know whether Windows successfully imported the ZIP. Clearing is manual and irreversible. Never clear a batch until you personally verify the import in Windows and retain a safe backup.**
 
-Safari-installed web apps do not appear directly as File Sharing apps in Apple Devices for Windows. For a fully offline cable workflow, use a separate iPhone app that supports Apple's USB File Sharing, such as **Documents by Readdle**. Documents supports ZIP files and File Sharing.
+## Photo transfer options
 
-Proposed workflow once the Windows importer is built:
+- `Optimized`: smaller JPEG copies, up to 1600 pixels on the longest side.
+- `Original`: preserves photo resolution and source format whenever possible.
+- The app holds full-resolution images on the phone until you use **Clear Transferred Notes**. After clearing, if you selected Optimized for the export, the original high-resolution photos are no longer available from Atlas Notes. Choose Original for important defect or equipment photographs.
 
-1. Export/Share the ZIP from Atlas Notes into Documents on your iPhone (the exact Share-sheet wording may vary by iOS version).
-2. Connect your iPhone to Windows by USB.
-3. In **Apple Devices** for Windows, choose your iPhone > **Files** > **Documents**, then copy the ZIP to the PC.
-4. Import the ZIP into Project Atlas's Windows Inbox using the future receiver.
-5. The receiver verifies the notes/photos, imports them, and generates a JSON receipt.
-6. Copy the receipt back into Documents using Apple Devices and open it using the Atlas Notes **Read import receipt** file chooser on the iPhone.
-7. After you approve the matching receipt, Atlas Notes deletes only the successfully imported, unmodified notes/photos.
+## What changed from v0.1
 
-This transfer workflow needs testing on your actual iPhone/Windows setup. The Windows receiver and end-to-end USB test are the next phase.
+- Replaced the **Read import receipt** step with a **manual Clear Transferred Notes button**.
+- The button is enabled only when the app has an exported batch with unchanged notes remaining. It shows the batch filename and notes eligible for removal.
+- Exported notes edited later are preserved. New notes are also preserved.
+- One confirmation is required before permanently deleting eligible notes and their locally stored photos.
+- Existing v0.1 export batches are recognized when upgrading, so you can clear previously imported v0.1 notes after checking them on Windows.
+- The ZIP import format (schema version 1) has **not** changed, so the Project Atlas v0.5 Windows importer remains compatible.
+- Updated offline service-worker cache identifier so the Home Screen app can receive the new UI and logic.
 
 ## Privacy and limitations
 
-- **No server or cloud synchronization.** The app has no remote API calls; only the app files are downloaded from GitHub Pages for installation/updates.
-- **Not yet production-ready for irreplaceable records.** iOS web storage may be removed under device storage pressure or by clearing website data. Transfer important notes regularly; a ZIP is a backup only once you've confirmed it is safely stored on your PC.
-- **GitHub Pages source is public.** Never commit exported notes, photos, backups, or company documents to this repository.
-- **No Windows Inbox import yet.** The ZIP export and the phone-side receipt validation are implemented; the Windows ingestion and receipt generation still need to be developed.
-- **No automatic background transfers.** Cable/Files transfers are manual; the application itself remains offline.
-
-## Files
-
-- `index.html` - UI structure
-- `styles.css` - phone layout
-- `app.js` - local note storage, photo handling, exports, receipt verification
-- `zip.js` - local ZIP packer (no third-party dependencies)
-- `manifest.webmanifest` - installable app metadata
-- `service-worker.js` - offline app-shell caching
-- `icon-180.png`, `icon-192.png`, `icon-512.png` - app icons
-
-Version: prototype v0.1.
+- Everything in the core capture app works offline once it has been installed and cached.
+- GitHub Pages hosts **only the app files**. Do not upload notes or ZIP exports to the public repository.
+- No automatic USB synchronization or automated import verification is implemented; cable transfer and clearing require your action.
+- Because iOS Home Screen app data can be lost if website data is cleared or the app is removed, import valuable records to Windows regularly and save verified backup files before clearing.
+- The ZIP is a standard uncompressed archive with `manifest.json` and `photos/...`. See `TRANSFER_FORMAT.md` for technical details.
+- Chrome's Files-folder visibility in Apple Devices has been confirmed on your setup but could differ on other iPhones or versions.
